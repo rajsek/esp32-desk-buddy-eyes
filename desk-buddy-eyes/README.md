@@ -55,16 +55,17 @@ Same board, same OLED, same eye animation logic.
 
 | | Espruino (JS) | C++ (Arduino) |
 |---|---|---|
-| Free memory | 2250 blocks x 14 B = ~31.5 KB | 327,988 B = ~320 KB |
-| How it's measured | `process.memory()` in the Espruino console (its own JS pool) | `ESP.getFreeHeap()` at startup (whole chip's free heap) |
+| Free memory | 2250 blocks x 14 B = ~31.5 KB | 327,988 B free heap |
+| How it's measured | `process.memory()` in the Espruino console (its own JS pool) | `ESP.getFreeHeap()` after OLED init, before `loop()` (whole chip's free heap) |
 | Debug loop | Type a line in the console, it runs immediately | Edit, compile, upload, watch Serial |
 
 Careful with the memory numbers: they measure different things.
-`process.memory()` reports Espruino's fixed JavaScript pool only (2649
-blocks total, about 37 KB; the eyes program plus the JS runtime state used
-399 blocks, about 15% of that pool, leaving 2250 blocks / 31.5 KB free
-inside it). `ESP.getFreeHeap()` reports the whole chip's free heap at
-startup, after the OLED was initialized. Because the scopes are different,
+`process.memory()` reports Espruino's fixed JavaScript pool only (2,649
+blocks total, about 37 KB; 399 of the 2,649 blocks were occupied in this
+snapshot, about 15% of the pool, with baseline and runtime overhead not
+separately measured, leaving 2,250 blocks / 31.5 KB free inside it).
+`ESP.getFreeHeap()` reports the whole chip's free heap after the OLED was
+initialized, before the loop. Because the scopes are different,
 the two numbers are not directly comparable and I am not quoting a ratio.
 
 My takeaways:
